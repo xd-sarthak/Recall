@@ -4,22 +4,24 @@
  * Validates failure notes according to strict constraints:
  * - Max 3 bullets
  * - Max 15 words per bullet
- * - Whitelist text validation (letters, spaces, basic punctuation only)
+ * - Whitelist text validation (letters, digits, spaces, basic punctuation including parentheses)
  */
 
-const ALLOWED_CHARS_REGEX = /^[a-zA-Z\s.,;:'-]+$/;
+const ALLOWED_CHARS_REGEX = /^[a-zA-Z0-9\s.,;:'()-]+$/;
 
 /**
  * Count words in text using explicit definition:
  * - A word = sequence of characters separated by whitespace
- * - Strip punctuation for counting purposes
+ * - Strip punctuation (except hyphens/apostrophes) for counting purposes
  * - Count tokens that contain at least one alphabet character
  * 
  * Examples:
  * - "non-monotonic" = 1 word
  * - "O(n)" = 1 word (parentheses stripped, "On" counted)
+ * - "2-pointers" = 1 word (digits preserved, hyphen preserved)
  * - "two-pointers" = 1 word
  * - "Didn't consider" = 2 words
+ * - "2 pointers" = 1 word ("2" has no letters, only "pointers" counted)
  */
 export function countWords(text: string): number {
   if (!text.trim()) return 0;
@@ -38,10 +40,11 @@ export function countWords(text: string): number {
  * 
  * Allowed:
  * - Letters (a-z, A-Z)
+ * - Digits (0-9)
  * - Spaces
- * - Basic punctuation: . , ; : ' -
+ * - Basic punctuation: . , ; : ' - ( )
  * 
- * Rejects anything else (numbers, special chars, code symbols)
+ * Rejects anything else (special chars, code symbols like {}, [], =, etc.)
  */
 export function isValidFailureNoteText(text: string): boolean {
   if (!text.trim()) return true;
@@ -91,7 +94,7 @@ export function validateFailureNotes(
     if (trimmedNote && !isValidFailureNoteText(trimmedNote)) {
       return {
         isValid: false,
-        error: `Failure note ${i + 1} contains invalid characters. Only letters, spaces, and basic punctuation (. , ; : ' -) are allowed`,
+        error: `Failure note ${i + 1} contains invalid characters. Only letters, digits, spaces, and basic punctuation (. , ; : ' - ( )) are allowed`,
       };
     }
 

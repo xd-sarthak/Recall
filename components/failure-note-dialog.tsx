@@ -52,7 +52,7 @@ export function FailureNoteDialog({
     if (trimmedValue) {
       if (!isValidFailureNoteText(trimmedValue)) {
         newErrors[index] =
-          "Only letters, spaces, and basic punctuation (. , ; : ' -) are allowed";
+          "Only letters, digits, spaces, and basic punctuation (. , ; : ' - ( )) are allowed";
       } else {
         const wordCount = countWords(trimmedValue);
         if (wordCount > MAX_WORDS_PER_BULLET) {
